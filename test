@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Text file path
+txt_file="projects.txt"
+
+# CSV file path
+csv_file="GCP_Compute_Instances.csv"
+
+# Generate GCP Projects files
+gcloud projects list --format='value(project_id)' > "$txt_file"
+
+# Create or overwrite the CSV file with the header
+echo "PROJECT_ID,NAME,ZONE,MACHINE_TYPE,PREEMPTIBLE,INTERNAL_IP,EXTERNAL_IP,STATUS" > "$csv_file"
+
+
+# Read the text file line by line
+while IFS= read -r line; do
+  echo "Processing line: $line"
+  
+  # Execute your desired command for each line
+  command_output=$(gcloud compute instances list --project "$line" --format='csv[no-heading](NAME,ZONE,MACHINE_TYPE,PREEMPTIBLE,INTERNAL_IP,EXTERNAL_IP,STATUS)' 2>&1)
+
+  exit_status=$?
+  echo "exist status is "$exit_status" for project" "$line"
+
+  if [ $exit_status -eq 0 ]; then
+    echo "$line,$command_output" >> "$csv_file"
+  else
+    echo "$line, Compute engine API not enabled" >> "$csv_file"
+  fi
+
+  # Append the line and command output to the CSV file
+  
+
+  echo "Project processed: $line"
+  echo "Command output: $command_output"
+
+  
+done < "$txt_file"
+
+echo "CSV file has been generated: $csv_file"
