@@ -10,7 +10,7 @@ terraform {
     organization = "bineeshn"
     hostname     = "app.terraform.io" # Optional; defaults to app.terraform.io
     workspaces {
-      name = "terraformtest1"
+      name = "GCP-Terraform-Learning"
     }
   }
 
