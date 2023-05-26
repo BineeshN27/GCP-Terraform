@@ -17,14 +17,6 @@ terraform {
 }
 
 
-
-
-
-
-
-
-
-
 provider "google" {
   # Configuration options
   project = "gcp-terraform-learning-387818"
