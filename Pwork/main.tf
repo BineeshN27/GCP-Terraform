@@ -42,3 +42,32 @@ module "vm_without_static_ip" {
   project_id                         = data.google_project.project_name.project_id
 }
 
+############## create static IPs ############
+
+resource "google_compute_address" "compute_ips" {
+count = 4
+name = "static-ips-${count.index}"
+#network = var.vpc_name
+subnetwork = var.subnet.use1.name
+address_type = "INTERNAL"
+region = "us-east1"
+
+
+}
+
+############## vm-with-static-ip ############
+module "vm_with_static_ip" {
+  source                             = "./modules/vm-with-static-ip"
+  compute_instance_with_static_ip = var.compute_instance_with_static_ip
+  project_id                         = data.google_project.project_name.project_id
+}
+
+############## notification-channel ############
+module "notification_channel" {
+  source = "./modules/notification-channel"
+  for_each = var.notification_channel
+  display_name = each.key
+  notification_type = each.value.notification_type
+  force_delete = each.value.force_delete
+  notification_labels = each.value.notification_labels
+}
